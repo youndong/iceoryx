@@ -18,6 +18,7 @@
 #include "iceoryx_posh/roudi/memory/roudi_memory_manager.hpp"
 
 #include "iceoryx_posh/roudi/memory/memory_provider.hpp"
+#include "iox/assertions.hpp"
 #include "iox/logging.hpp"
 
 namespace iox
@@ -70,11 +71,7 @@ expected<void, RouDiMemoryManagerError> RouDiMemoryManager::createAndAnnounceMem
 
     for (auto memoryProvider : m_memoryProvider)
     {
-        if (memoryProvider == nullptr)
-        {
-            IOX_LOG(Error, "Null memory provider detected");
-            return err(RouDiMemoryManagerError::MEMORY_CREATION_FAILED);
-        }
+        IOX_ASSERT(memoryProvider != nullptr, "Null memory provider detected - this should never happen");
         
         auto result = memoryProvider->create();
         if (result.has_error())

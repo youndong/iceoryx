@@ -93,6 +93,12 @@ NodeBuilder&& NodeBuilder::domain_id_from_env_or_default() && noexcept
     return std::move(*this).domain_id_from_env_or(DEFAULT_DOMAIN_ID);
 }
 
+NodeBuilder&& NodeBuilder::shares_address_space_with_roudi(const bool value) && noexcept
+{
+    m_shares_address_space_with_roudi = value;
+    return std::move(*this);
+}
+
 expected<Node, NodeBuilderError> NodeBuilder::create() noexcept
 {
     if (!m_domain_id.has_value())

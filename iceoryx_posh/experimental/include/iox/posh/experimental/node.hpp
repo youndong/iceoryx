@@ -66,9 +66,11 @@ class NodeBuilder
 
     /// @brief Indicates whether the node shares the address space with 'RouDi', e.g. in single process applications or
     /// tests
-    IOX_BUILDER_PARAMETER(bool, shares_address_space_with_roudi, false)
+  protected:
+    bool m_shares_address_space_with_roudi{false};
 
   public:
+    NodeBuilder&& shares_address_space_with_roudi(const bool value) && noexcept;
     /// @brief Determines which domain to use to register to a RouDi instance
     /// @param[in] domain_id to be used as domain ID
     NodeBuilder&& domain_id(const DomainId domainId) && noexcept;

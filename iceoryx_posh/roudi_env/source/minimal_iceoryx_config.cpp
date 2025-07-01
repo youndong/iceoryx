@@ -15,7 +15,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "iceoryx_posh/roudi_env/minimal_iceoryx_config.hpp"
-#include "iox/logging.hpp"
+#include "iox/assertions.hpp"
 
 namespace iox
 {
@@ -26,27 +26,14 @@ IceoryxConfig MinimalIceoryxConfigBuilder::create() const noexcept
     IceoryxConfig config;
     mepoo::MePooConfig mepooConfig;
     
-    // Validate parameters before use
-    if (m_payloadChunkSize == 0U)
-    {
-        IOX_LOG(Error, "Invalid payload chunk size: cannot be zero");
-        return config; // Return empty config on error
-    }
-    
-    if (m_payloadChunkCount == 0U)
-    {
-        IOX_LOG(Error, "Invalid payload chunk count: cannot be zero");
-        return config; // Return empty config on error
-    }
+    // Validate parameters - these are invariants that must be satisfied
+    IOX_ASSERT(m_payloadChunkSize != 0U, "Invalid payload chunk size: cannot be zero");
+    IOX_ASSERT(m_payloadChunkCount != 0U, "Invalid payload chunk count: cannot be zero");
     
     mepooConfig.addMemPool({m_payloadChunkSize, m_payloadChunkCount});
     
     auto currentGroup = PosixGroup::getGroupOfCurrentProcess();
-    if (currentGroup.getName().empty())
-    {
-        IOX_LOG(Error, "Failed to get current process group name");
-        return config; // Return empty config on error
-    }
+    IOX_ASSERT(!currentGroup.getName().empty(), "Failed to get current process group name");
     
     config.m_sharedMemorySegments.push_back({currentGroup.getName(), currentGroup.getName(), mepooConfig});
 
